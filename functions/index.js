@@ -24,7 +24,7 @@ const netlifyAPI = functions.config().netlify.api;
 const netlifyToken = functions.config().netlify.token;
 
 // TODO Add logic to use user selected template stored in menu data
-const template = 'testtemplate';
+const template = 'simplemenu';
 
 const tomlContent = `
   [build]
