@@ -5,7 +5,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const Octokit = require('@octokit/rest');
 const axios = require('axios');
-const serviceAccount = require('./fancymenu-f86d3-firebase-adminsdk-g52lc-7f843cbf5a.json');
+const serviceAccount = require('./fancymenu-f86d3-firebase-adminsdk-g52lc-45b5065772.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -28,9 +28,11 @@ const template = 'testtemplate';
 
 const tomlContent = `
   [build]
+    command = "CI= npm run build"
     publish = "${template}"
 
   [context.branch-deploy]
+    command = "CI= npm run build"
     publish = "${template}"
 `;
 
