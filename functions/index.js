@@ -29,11 +29,13 @@ const template = 'simplemenu';
 const tomlContent = `
   [build]
     command = "CI= npm run build"
-    publish = "${template}"
+    publish = "${template}/public"
+    base = "${template}"
 
   [context.branch-deploy]
     command = "CI= npm run build"
-    publish = "${template}"
+    publish = "${template}/public"
+    base = "${template}"
 `;
 
 exports.netlifyHook = functions.https.onRequest((req, res) => {
@@ -100,36 +102,90 @@ exports.onMenuCreate = functions
         sha: masterSha,
       })
       .then(() => {
+
+        // here we will fetch our id_data.json and then update that, and then we will fetch and update our toml
+
+
+
+        const idContent = `
+          {
+            "business": "${businessId}",
+            "menu": "${menuData.id}"
+          }
+        `;
+
+
         // Get sha reference to branch netlify config file
         octokit.repos.getContents({
           owner,
           repo,
-          path: 'netlify.toml',
+          path: 'id_data.json',
           ref: encodedBusinessName,
         })
         .then(netlifyConfig => {
 
-          // Use reference to netlify.toml on branch
+          // Use reference to id_data.json on branch
           // to update same file with different build directory
           const { sha } = netlifyConfig.data;
 
-          return octokit.repos.createOrUpdateFile({
+          octokit.repos.createOrUpdateFile({
             owner,
             repo,
-            path: 'netlify.toml',
+            path: 'id_data.json',
             branch: encodedBusinessName,
             // message: `Changing netlify config with ${encodedBusinessName} with menu data`,
-            message: 'netlify.toml',
+            message: 'id_data.json',
             sha,
-            content: Buffer.from(tomlContent.trim()).toString('base64'),
+            content: Buffer.from(idContent.trim()).toString('base64'),
+
+
+          }).then(()=>{
+
+
+
+            // Get sha reference to branch netlify config file
+            octokit.repos.getContents({
+              owner,
+              repo,
+              path: 'netlify.toml',
+              ref: encodedBusinessName,
+            })
+            .then(netlifyConfig => {
+
+              // Use reference to netlify.toml on branch
+              // to update same file with different build directory
+              const { sha } = netlifyConfig.data;
+
+              return octokit.repos.createOrUpdateFile({
+                owner,
+                repo,
+                path: 'netlify.toml',
+                branch: encodedBusinessName,
+                // message: `Changing netlify config with ${encodedBusinessName} with menu data`,
+                message: 'netlify.toml',
+                sha,
+                content: Buffer.from(tomlContent.trim()).toString('base64'),
+              })
+              .catch(err => {
+                console.log('Failed at updating netlify toml', err);
+              })
+            })
+            .catch(err => {
+              console.log('Failed at fetching netlify toml', err);
+            })
+
+
+
+
           })
           .catch(err => {
-            console.log('Failed at updating netlify toml', err);
+            console.log('Failed at updating id_data.json', err);
           })
         })
         .catch(err => {
-          console.log('Failed at fetching netlify toml', err);
+          console.log('Failed at fetching id_data.json', err);
         })
+
       })
       .catch(err => {
         console.log('Failed at creating branch', err);
