@@ -72,6 +72,11 @@ exports.onMenuCreate = functions
 .onCreate((snap, context) => {
   // Menu data on create
   const menuData = snap.data();
+  const menuId = snap.id;
+
+
+
+
   const businessId = snap.ref.parent.parent.id;
 
   // Fetch Business
@@ -110,7 +115,7 @@ exports.onMenuCreate = functions
         const idContent = `
           {
             "business": "${businessId}",
-            "menu": "${menuData.id}"
+            "menu": "${menuId}"
           }
         `;
 
