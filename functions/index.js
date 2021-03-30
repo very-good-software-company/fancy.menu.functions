@@ -34,20 +34,6 @@ function handleError(message, err) {
 
 }
 
-// TODO Add logic to use user selected template stored in menu data
-const template = 'simplemenu';
-
-const tomlContent = `
-  [build]
-    command = "CI= npm run build"
-    publish = "${template}/public"
-    base = "${template}"
-
-  [context.branch-deploy]
-    command = "CI= npm run build"
-    publish = "${template}/public"
-    base = "${template}"
-`;
 
 exports.netlifyHook = functions.https.onRequest((req, res) => {
   if(req.body.title === 'netlify.toml') {
@@ -164,6 +150,25 @@ exports.onMenuCreate = functions
   // Use reference to netlify.toml on branch
   // to update same file with different build directory
   const { sha: toml } = netlifyToml.data;
+
+
+
+
+  // TODO Add logic to use user selected template stored in menu data
+  const template = 'simplemenu';
+
+  const tomlContent = `
+    [build]
+      command = "CI= npm run build"
+      publish = "${template}/public"
+      base = "${template}"
+
+    [context.branch-deploy]
+      command = "CI= npm run build"
+      publish = "${template}/public"
+      base = "${template}"
+  `;
+
 
   await octokit.repos.createOrUpdateFile({
     owner,
