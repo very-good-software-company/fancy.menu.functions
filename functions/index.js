@@ -134,7 +134,7 @@ exports.onMenuCreate = functions
     branch: encodedBusinessName,
     // message: `Changing netlify config with ${encodedBusinessName} with menu data`,
     message: 'id_data.json',
-    id_data,
+    sha: id_data,
     content: Buffer.from(idContent.trim()).toString('base64'),
 
   }).catch(err => handleError('Failed at updating id_data.json', err));;
@@ -152,8 +152,6 @@ exports.onMenuCreate = functions
   const { sha: toml } = netlifyToml.data;
 
 
-
-
   // TODO Add logic to use user selected template stored in menu data
   const template = 'simplemenu';
 
@@ -169,7 +167,6 @@ exports.onMenuCreate = functions
       base = "${template}"
   `;
 
-
   await octokit.repos.createOrUpdateFile({
     owner,
     repo,
@@ -177,7 +174,7 @@ exports.onMenuCreate = functions
     branch: encodedBusinessName,
     // message: `Changing netlify config with ${encodedBusinessName} with menu data`,
     message: 'netlify.toml',
-    toml,
+    sha: toml,
     content: Buffer.from(tomlContent.trim()).toString('base64'),
   }).catch(err => handleError('Failed at updating netlify toml', err));
 
