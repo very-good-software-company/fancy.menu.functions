@@ -139,7 +139,7 @@ exports.onMenuCreate = functions
 
   // Use reference to id_data.json on branch
   // to update same file with different build directory
-  const { sha } = netlifyConfig.data;
+  const { sha: id_data } = netlifyConfig.data;
 
   await octokit.repos.createOrUpdateFile({
     owner,
@@ -148,7 +148,7 @@ exports.onMenuCreate = functions
     branch: encodedBusinessName,
     // message: `Changing netlify config with ${encodedBusinessName} with menu data`,
     message: 'id_data.json',
-    sha,
+    id_data,
     content: Buffer.from(idContent.trim()).toString('base64'),
 
   }).catch(err => handleError('Failed at updating id_data.json', err));;
@@ -161,10 +161,9 @@ exports.onMenuCreate = functions
     ref: encodedBusinessName,
   }).catch(err => handleError('Failed at fetching netlify toml', err));;
 
-
   // Use reference to netlify.toml on branch
   // to update same file with different build directory
-  const { sha } = netlifyToml.data;
+  const { sha: toml } = netlifyToml.data;
 
   await octokit.repos.createOrUpdateFile({
     owner,
@@ -173,7 +172,7 @@ exports.onMenuCreate = functions
     branch: encodedBusinessName,
     // message: `Changing netlify config with ${encodedBusinessName} with menu data`,
     message: 'netlify.toml',
-    sha,
+    toml,
     content: Buffer.from(tomlContent.trim()).toString('base64'),
   }).catch(err => handleError('Failed at updating netlify toml', err));
 
