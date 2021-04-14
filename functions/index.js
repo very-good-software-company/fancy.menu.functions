@@ -1,10 +1,3 @@
-// TODO check for status of github calls, if error report it. Also send back status to client
-// TODO Refactor promises to be readable
-
-
-// TODO Sean?? can we update the data base as each function completes or fails , and have our clients subscribe to that data if it pertains to them. as a way to show updates on menu create??? !!! 
-
-
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const Octokit = require('@octokit/rest');
